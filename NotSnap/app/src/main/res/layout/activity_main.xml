@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/yellow"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -22,14 +22,14 @@
 
     <ImageView
         android:id="@+id/captureButton"
-        android:layout_width="101dp"
-        android:layout_height="84dp"
+        android:layout_width="85dp"
+        android:layout_height="73dp"
         android:onClick="captureButtonHandler"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.892"
-        app:srcCompat="@mipmap/camera_icon_foreground" />
+        app:layout_constraintVertical_bias="0.906"
+        app:srcCompat="@drawable/transparent_camera_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
