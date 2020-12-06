@@ -1,7 +1,0 @@
-Duty:
-Research about camera API
-
-Achieve:
-Learned about android studio basics and created a simple app to test camera APIs
-
-

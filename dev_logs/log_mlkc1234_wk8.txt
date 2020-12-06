@@ -1,7 +1,0 @@
-Duty:
-debug CameraX with OpenCV
-
-Achieve:
-assisted implementing OpenCV into existing codes
-
-

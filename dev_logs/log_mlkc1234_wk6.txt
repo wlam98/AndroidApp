@@ -1,7 +1,0 @@
-Duty:
-Continue implementing CameraX to existing codes
-
-Achieve:
-setup and created Camera view and Camera capture functions.
-
-

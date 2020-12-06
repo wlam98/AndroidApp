@@ -1,7 +1,0 @@
-Duty:
-Create sample camera app
-
-Achieve:
-Tested a few camera APIs and seems CameraX is a good combination with OpenCV API which handles face detections and placing filters
-
-
