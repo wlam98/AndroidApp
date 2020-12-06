@@ -1,0 +1,7 @@
+Duty:
+Research about camera API and learn the basic of android studio
+
+Achieve:
+Week one no achieve
+
+
