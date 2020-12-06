@@ -13,6 +13,8 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -42,17 +44,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 {
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
     TextureView textureView;
     ImageView ivBitmap;
     LinearLayout llBottom;
 
     int cameraModeSelection = 0;
-
+    Handler handler;
     ImageCapture imageCapture;
     ImageAnalysis imageAnalysis;
     Preview preview;
 
-    FloatingActionButton btnCapture, btnOk, btnCancel;
+    FloatingActionButton btnCapture, btnOk, btnCancel, btnTimer;
+
+    Camera camera;
+    FacialDetection facialDetection;
 
     static {
         if (!OpenCVLoader.initDebug())
@@ -61,74 +67,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("SUCCESS", "OpenCV loaded");
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        btnCapture = findViewById(R.id.btnCapture);
-        btnOk = findViewById(R.id.btnAccept);
-        btnCancel = findViewById(R.id.btnReject);
-
-        btnOk.setOnClickListener(this);
-        btnCancel.setOnClickListener(this);
-
-        llBottom = findViewById(R.id.llBottom);
-        textureView = findViewById(R.id.textureView);
-        ivBitmap = findViewById(R.id.ivBitmap);
-
-        if (allPermissionsGranted()) {
-            startCamera();
-        } else {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
-        }
-    }
-
-    private void startCamera() {
-
-        CameraX.unbindAll();
-        preview = setPreview();
-        imageCapture = setImageCapture();
-        imageAnalysis = setImageAnalysis();
-
-        //bind to lifecycle:
-        CameraX.bindToLifecycle(this, preview, imageCapture, imageAnalysis);
-    }
-
-
-    private Preview setPreview() {
-
-        Rational aspectRatio = new Rational(textureView.getWidth(), textureView.getHeight());
-        Size screen = new Size(textureView.getWidth(), textureView.getHeight()); //size of the screen
-
-
-        PreviewConfig pConfig = new PreviewConfig.Builder().setTargetAspectRatio(aspectRatio).setTargetResolution(screen).build();
-        Preview preview = new Preview(pConfig);
-
-        preview.setOnPreviewOutputUpdateListener(
-                new Preview.OnPreviewOutputUpdateListener() {
-                    @Override
-                    public void onUpdated(Preview.PreviewOutput output) {
-                        ViewGroup parent = (ViewGroup) textureView.getParent();
-                        parent.removeView(textureView);
-                        parent.addView(textureView, 0);
-
-                        textureView.setSurfaceTexture(output.getSurfaceTexture());
-                        updateTransform();
-                    }
-                });
-
-        return preview;
-    }
-
-
     private ImageCapture setImageCapture() {
         ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
         final ImageCapture imgCapture = new ImageCapture(imageCaptureConfig);
 
 
+        btnTimer.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                handler=new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imgCapture.takePicture(new ImageCapture.OnImageCapturedListener() {
+                            @Override
+                            public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
+                                Bitmap bitmap = textureView.getBitmap();
+                                showAcceptedRejectedButton(true);
+                                ivBitmap.setImageBitmap(bitmap);
+                            }
+
+                            @Override
+                            public void onError(ImageCapture.UseCaseError useCaseError, String message, @Nullable Throwable cause) {
+                                super.onError(useCaseError, message, cause);
+                            }
+                        });
+                    }
+                },5000);
+            }
+        });
         btnCapture.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -148,135 +117,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         super.onError(useCaseError, message, cause);
                     }
                 });
-
-
-                /*File file = new File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "" + System.currentTimeMillis() + "_JDCameraX.jpg");
-                imgCapture.takePicture(file, new ImageCapture.OnImageSavedListener() {
-                    @Override
-                    public void onImageSaved(@NonNull File file) {
-                        Bitmap bitmap = textureView.getBitmap();
-                        showAcceptedRejectedButton(true);
-                        ivBitmap.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-
-                    }
-                });*/
             }
         });
 
         return imgCapture;
     }
 
-    private ImageAnalysis setImageAnalysis()
-    {
-        // Setup image analysis pipeline that computes average pixel luminance
-        HandlerThread analyzerThread = new HandlerThread("OpenCVAnalysis");
-        analyzerThread.start();
 
-        if(cameraModeSelection == 0)
-        {
-            System.out.println("Camera");
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        btnTimer=findViewById(R.id.btnTimer);
+        btnCapture = findViewById(R.id.btnCapture);
+        btnOk = findViewById(R.id.btnAccept);
+        btnCancel = findViewById(R.id.btnReject);
+
+        btnOk.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
+
+        llBottom = findViewById(R.id.llBottom);
+        textureView = findViewById(R.id.textureView);
+        ivBitmap = findViewById(R.id.ivBitmap);
+
+        imageCapture = setImageCapture();
+        facialDetection = new FacialDetection((Activity)this, cameraModeSelection, textureView, ivBitmap);
+        imageAnalysis = facialDetection.setImageAnalysis();
+
+        camera = new Camera(this, textureView);
+
+        if (allPermissionsGranted()) {
+            camera.startCamera(imageCapture, imageAnalysis);
+        } else {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
-        else if(cameraModeSelection == 1)
-        {
-            System.out.println("Face landmarks");
-        }
-        else
-        {
-            System.out.println("Red Rectange");
-        }
-
-        ImageAnalysisConfig imageAnalysisConfig = new ImageAnalysisConfig.Builder()
-                .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-                .setCallbackHandler(new Handler(analyzerThread.getLooper()))
-                .setImageQueueDepth(1).build();
-
-        ImageAnalysis imageAnalysis = new ImageAnalysis(imageAnalysisConfig);
-
-        imageAnalysis.setAnalyzer(
-                new ImageAnalysis.Analyzer() {
-                    @Override
-                    public void analyze(ImageProxy image, int rotationDegrees) {
-                        //Analyzing live camera feed begins.
-
-                        final Bitmap bitmap = textureView.getBitmap();
-
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ivBitmap.setImageBitmap(bitmap);
-                            }
-                        });
-
-                    }
-                });
-
-        return imageAnalysis;
     }
+
+
 
     private void showAcceptedRejectedButton(boolean acceptedRejected) {
         if (acceptedRejected) {
-            CameraX.unbind(preview, imageAnalysis);
+            CameraX.unbind(camera.preview, camera.imageAnalysis);
             llBottom.setVisibility(View.VISIBLE);
             btnCapture.hide();
+            btnTimer.hide();
             textureView.setVisibility(View.GONE);
         } else {
             btnCapture.show();
+            btnTimer.show();
             llBottom.setVisibility(View.GONE);
             textureView.setVisibility(View.VISIBLE);
             textureView.post(new Runnable() {
                 @Override
                 public void run() {
-                    startCamera();
+                    camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
                 }
             });
         }
     }
 
 
-    private void updateTransform() {
-        Matrix mx = new Matrix();
-        float w = textureView.getMeasuredWidth();
-        float h = textureView.getMeasuredHeight();
 
-        float cX = w / 2f;
-        float cY = h / 2f;
-
-        int rotationDgr;
-        int rotation = (int) textureView.getRotation();
-
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                rotationDgr = 0;
-                break;
-            case Surface.ROTATION_90:
-                rotationDgr = 90;
-                break;
-            case Surface.ROTATION_180:
-                rotationDgr = 180;
-                break;
-            case Surface.ROTATION_270:
-                rotationDgr = 270;
-                break;
-            default:
-                return;
-        }
-
-        mx.postRotate((float) rotationDgr, cX, cY);
-        textureView.setTransform(mx);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera();
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
             } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 finish();
@@ -297,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -307,17 +216,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.black_white:
                 cameraModeSelection = 0;
-                startCamera();
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
                 return true;
 
             case R.id.hsv:
                 cameraModeSelection = 1;
-                startCamera();
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
                 return true;
 
             case R.id.lab:
                 cameraModeSelection = 2;
-                startCamera();
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
                 return true;
         }
 
