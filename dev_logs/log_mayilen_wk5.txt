@@ -1,0 +1,5 @@
+week 5
+Duty
+Researched on how to make a dropdown menu
+Achievement:
+implemented a function for generating a option menu

@@ -1,0 +1,6 @@
+week 4
+Duty:
+encountered issues with the splash screen where it would load too quick for users to notice
+that there is a splash screen
+Achievement:
+reworked on the coding for the splash screen using handlers instead which lets us control how long the user sees the page

@@ -1,0 +1,5 @@
+week6
+Duty:
+worked on a function that handles camera rotation
+Achievement:
+learnt how to use the needed built-in functions supported

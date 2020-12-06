@@ -1,0 +1,5 @@
+week 10
+Duty:
+implementation of the timer button
+Achievement:
+used handler that delays the call to capture the image with a delay of 5 seconds
