@@ -1,0 +1,10 @@
+Duty:
+Continue debuging app:
+- saving issue
+- lag
+
+Achieve:
+resolved button disappearing issue, seem to be when capture function is called the replaced the screen and the 
+button is covered by the new view.
+
+

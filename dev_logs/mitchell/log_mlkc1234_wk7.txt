@@ -1,0 +1,7 @@
+Duty:
+assist group mate to implement OpenCV
+
+Achieve:
+implemented CameraX into existing codes
+
+
