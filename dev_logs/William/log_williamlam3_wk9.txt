@@ -1,0 +1,11 @@
+Week 9 (November 16, 2020) -
+	Duties:
+	3 - Worked on D3 document.
+	1 - Created Architecture Diagram (MVC)
+
+	Achievement:
+	1 - Help create Layered Diagram
+
+	4 - Meeting
+
+	Total: 9 hours.

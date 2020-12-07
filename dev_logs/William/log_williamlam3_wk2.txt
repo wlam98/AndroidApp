@@ -1,0 +1,12 @@
+Week 2 (September 28, 2020) -
+	Duties:
+	2 - Researched about computer vision and OpenCV
+	4 - Installing OpenCV and trying/learning face recognition with Python
+
+	Achievement:
+	1 - Set up Github and learned how to use git
+	1 - Set up Android Studio
+	
+	2 - Meeting
+
+	Total: 10

@@ -1,0 +1,10 @@
+Week 11 (November 30, 2020)-
+	Duties:
+	6 - Continued working on face filters functionality. Still having trouble. Very little documentation or tutorial for Java.
+
+	Achievement:
+	3 - Prepared for oral exam.
+
+	1 - Meeting
+
+	Total: 10 hours.
