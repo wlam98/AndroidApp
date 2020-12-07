@@ -1,0 +1,3 @@
+WEEK 12: 
+Duty: Add share button + functionality behind it 
+Achievement of week12: Completed functionality  
