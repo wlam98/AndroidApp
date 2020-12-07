@@ -1,0 +1,15 @@
+Week 1 (September 21, 2020) -
+	Duties:
+	1 - Researched about non-functional properties
+	1- Researched about Android development vs iOS development and Java vs Kotlin
+	1 - Generated app ideas like movie review app, AR game, camera app
+
+	Achievement:
+	2 - Create mockups of app layouts using Figma.
+	0.5 - Created PowerPoint slides for presentation.
+	1 - Created script for presentation and practiced.
+	5 - Wrote Deliverable #1.
+
+	3 - Meeting
+
+	Total: 14.5
