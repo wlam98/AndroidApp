@@ -1,0 +1,3 @@
+WEEK 7: 
+Duty: Add functionality behind image edit page (accept, reject page, Image Capture page) 
+Achievement of week 7: Researched about button handlers and activity navigation. Implemented click listener for shutter button event and implemented Capture page 

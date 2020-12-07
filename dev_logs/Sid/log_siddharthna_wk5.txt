@@ -1,0 +1,3 @@
+WEEK 5: 
+Duty: Learn fundamentals of android app development 
+Achievement of week 5: learnt about fundamentals of android app development ( Leant about activities and different UI components) 
