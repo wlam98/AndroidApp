@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -53,9 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Handler handler;
     ImageCapture imageCapture;
     ImageAnalysis imageAnalysis;
-    Preview preview;
 
-    FloatingActionButton btnCapture, btnOk, btnCancel, btnTimer;
+    FloatingActionButton btnCapture, btnOk, btnCancel, btnTimer, btnHint;;
 
     Camera camera;
     FacialDetection facialDetection;
@@ -132,9 +132,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnCapture = findViewById(R.id.btnCapture);
         btnOk = findViewById(R.id.btnAccept);
         btnCancel = findViewById(R.id.btnReject);
+        btnHint = findViewById(R.id.btnhint);
 
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
+
+        btnHint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, Instruction.class));
+            }
+        });
 
         llBottom = findViewById(R.id.llBottom);
         textureView = findViewById(R.id.textureView);
@@ -152,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
     }
-
 
 
     private void showAcceptedRejectedButton(boolean acceptedRejected) {
@@ -175,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
     }
-
 
 
 
@@ -242,18 +248,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btnAccept:
                 File file = new File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "" + System.currentTimeMillis() + "_JDCameraX.jpg");
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "" + System.currentTimeMillis() + "_CameraX.jpg");
                 imageCapture.takePicture(file, new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
+                        System.out.println(file.toString());
                         showAcceptedRejectedButton(false);
-
                         Toast.makeText(getApplicationContext(), "Image saved successfully in Pictures Folder", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-
+                        String msg = "Picture capture failed: " + message;
+                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
                     }
                 });
                 break;
