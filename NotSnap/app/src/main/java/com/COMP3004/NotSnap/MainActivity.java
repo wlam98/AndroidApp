@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int cameraModeSelection = 0;
 
 
-        Handler handler;
+    Handler handler;
     ImageCapture imageCapture;
     ImageAnalysis imageAnalysis;
     Preview preview;
@@ -257,6 +257,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.pig:
                 cameraModeSelection = 3;
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+                return true;
+
+            case R.id.toque:
+                cameraModeSelection = 4;
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+                return true;
+
+            case R.id.moustache:
+                cameraModeSelection = 5;
                 camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
                 return true;
         }

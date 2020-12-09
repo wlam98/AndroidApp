@@ -31,5 +31,9 @@
         android:title="Toque"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/moustache"
+        android:title="Moustache"
+        app:showAsAction="never" />
 
 </menu>
