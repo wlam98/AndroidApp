@@ -13,7 +13,8 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
+import android.content.Context;
+import android.app.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.text.Html;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
@@ -35,9 +37,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+
+import org.opencv.face.Face;
+import org.opencv.face.Facemark;
+import org.opencv.objdetect.CascadeClassifier;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -51,14 +59,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout llBottom;
 
     int cameraModeSelection = 0;
+
+
     Handler handler;
     ImageCapture imageCapture;
     ImageAnalysis imageAnalysis;
+    Preview preview;
+    Context ctx;
 
     FloatingActionButton btnCapture, btnOk, btnCancel, btnTimer, btnHint;;
 
-    Camera camera;
+    // Model and View
     FacialDetection facialDetection;
+    Camera camera;
+
 
     static {
         if (!OpenCVLoader.initDebug())
@@ -98,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 },5000);
             }
         });
+
         btnCapture.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -123,20 +138,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return imgCapture;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getSupportActionBar().setTitle(Html.fromHtml("<font color=\"black\">" + getString(R.string.app_name) + "</font>"));
+
         btnTimer=findViewById(R.id.btnTimer);
         btnCapture = findViewById(R.id.btnCapture);
         btnOk = findViewById(R.id.btnAccept);
         btnCancel = findViewById(R.id.btnReject);
         btnHint = findViewById(R.id.btnhint);
 
+
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
-
         btnHint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,8 +166,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivBitmap = findViewById(R.id.ivBitmap);
 
         imageCapture = setImageCapture();
-        facialDetection = new FacialDetection((Activity)this, cameraModeSelection, textureView, ivBitmap);
-        imageAnalysis = facialDetection.setImageAnalysis();
+
+
+        facialDetection = new FacialDetection((Activity)this, textureView, ivBitmap, this);
+        imageAnalysis = facialDetection.setImageAnalysis(cameraModeSelection);
+
+        System.out.println("Created face");
+
 
         camera = new Camera(this, textureView);
 
@@ -160,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
     }
-
 
     private void showAcceptedRejectedButton(boolean acceptedRejected) {
         if (acceptedRejected) {
@@ -177,12 +198,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textureView.post(new Runnable() {
                 @Override
                 public void run() {
-                    camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
+                    camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+
                 }
             });
         }
     }
-
 
 
     @Override
@@ -190,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
             } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 finish();
@@ -211,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -222,17 +242,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.black_white:
                 cameraModeSelection = 0;
-                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
                 return true;
 
             case R.id.hsv:
                 cameraModeSelection = 1;
-                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
                 return true;
 
             case R.id.lab:
                 cameraModeSelection = 2;
-                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis());
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+                return true;
+
+            case R.id.pig:
+                cameraModeSelection = 3;
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+                return true;
+
+            case R.id.toque:
+                cameraModeSelection = 4;
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+                return true;
+
+            case R.id.moustache:
+                cameraModeSelection = 5;
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
                 return true;
         }
 
@@ -254,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onImageSaved(@NonNull File file) {
                         System.out.println(file.toString());
                         showAcceptedRejectedButton(false);
+
                         Toast.makeText(getApplicationContext(), "Image saved successfully in Pictures Folder", Toast.LENGTH_LONG).show();
                     }
 

@@ -1,0 +1,12 @@
+Week 10 (November 23, 2020)-
+D3
+	Duties:
+	1 - Helped create UML diagram
+	8 - Troubleshooting get each coordinate for face landmarks. Big win. Have trouble to apply face filters. Masking issues and sub Mat issues.
+	
+	Achievement:
+	5 - Completed D3 document.
+
+	2 - Meeting
+
+	Total: 16 hours.

@@ -1,0 +1,5 @@
+week 3
+Duty
+Researched on different implementation of a splash screen
+Achievement
+halfway through the implementation of the splash-screen

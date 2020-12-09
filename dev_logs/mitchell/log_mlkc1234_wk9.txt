@@ -1,0 +1,7 @@
+Duty:
+Looking for solution to resolve the lag of the program when face detection is on.
+
+Achieve:
+continued debuging cameraX with openCV
+
+

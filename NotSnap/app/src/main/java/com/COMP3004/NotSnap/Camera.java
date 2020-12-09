@@ -70,9 +70,6 @@ public class Camera{
         return preview;
     }
 
-
-
-
     private void updateTransform() {
         Matrix mx = new Matrix();
         float w = textureView.getMeasuredWidth();

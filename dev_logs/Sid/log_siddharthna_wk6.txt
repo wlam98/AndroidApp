@@ -1,0 +1,3 @@
+WEEK 6: 
+Duty: Figure out how to get started on the camera. Does it require permissions or need to call other APIs? Do we need anything before CameraX? 
+Achievement of week 6: research about hardware (camera) permissions. Read android developer docs and implemented code behind camera permissions. 

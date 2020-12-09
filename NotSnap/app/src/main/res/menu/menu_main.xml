@@ -3,6 +3,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     tools:context=".MainActivity">
 
     <item
@@ -19,4 +20,20 @@
         android:id="@+id/lab"
         android:title="Rectangle Box"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/pig"
+        android:title="Pig Nose"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/toque"
+        android:title="Toque"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/moustache"
+        android:title="Moustache"
+        app:showAsAction="never" />
+
 </menu>

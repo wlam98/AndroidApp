@@ -1,0 +1,10 @@
+Duty:
+Continue debuging app:
+- saving issue
+- lag
+- buttons disappearing
+
+Achieve:
+Unable to locate what is causing the lag
+
+

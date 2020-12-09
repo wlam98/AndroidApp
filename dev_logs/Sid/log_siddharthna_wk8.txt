@@ -1,0 +1,3 @@
+WEEK 8:
+Duty: Decide app architecture (D3)
+Achievement of week 8: Discussed various architecture styles and design patterns. Finalised on the best idea + contributed in architecture diagrams and D3 documentation 

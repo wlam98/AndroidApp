@@ -1,0 +1,7 @@
+Duty:
+Debug sample Camera app
+
+Achieve:
+Sample camera app completed and able to setup camera view and take pictures, however images are unable to save due to locational errors.
+
+
