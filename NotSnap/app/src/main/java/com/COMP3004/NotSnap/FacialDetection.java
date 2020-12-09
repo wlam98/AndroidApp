@@ -54,6 +54,7 @@ public class FacialDetection {
 
     Mat nose = new Mat();
     Mat toque = new Mat();
+    Mat moustache = new Mat();
 
     // Constructor
     public FacialDetection(Activity a, TextureView t, ImageView i, Context contxt)
@@ -75,6 +76,7 @@ public class FacialDetection {
 
         nose = load_nose(nose);
         toque = load_toque(toque);
+        moustache = load_moustache(moustache);
     }
 
     public ImageAnalysis setImageAnalysis(final int cameraModeSelection)
@@ -422,6 +424,87 @@ public class FacialDetection {
                                 }
 
                             }
+                            // Moustache face filter
+                            else if(cameraModeSelection == 5)
+                            {
+                                List<MatOfPoint2f> landmarks = new LinkedList<MatOfPoint2f>();
+
+                                // Face landmark detection
+                                boolean success = facemark.fit(temp, faceDetections, landmarks);
+                                if (success)
+                                {
+                                    System.out.println("Face detected. Landmark size is " + landmarks.size());
+
+                                    // If successful, draw key points on the video frame
+                                    // Landmarks size is # of face is detected
+                                    for (int i = 0; i < landmarks.size(); i++)
+                                    {
+                                        // Customize the function of drawing facial feature points, which can draw the shape/contour of facial feature points. JAVA version does not do it temporarily
+                                        // Face.drawFacemarks(temp, landmarks.get(i));
+
+                                        // OpenCV comes with a function for drawing key points of the face: drawFacemarks
+                                        //Face.drawFacemarks(temp, landmarks.get(i), new Scalar(255, 0, 0));
+
+                                        Point[] landmarkPoints = landmarks.get(0).toArray();
+
+                                        // Finding landmarks on face
+                                        Point top_nose = new Point(landmarkPoints[29].x, landmarkPoints[29].y);
+                                        Point left_nose = new Point(landmarkPoints[31].x, landmarkPoints[31].y);
+                                        Point right_nose = new Point(landmarkPoints[35].x, landmarkPoints[35].y);
+                                        Point centre_nose = new Point(landmarkPoints[30].x, landmarkPoints[30].y);
+
+                                        Point centre_moustache = new Point(landmarkPoints[33].x, landmarkPoints[33].y);
+
+                                        //Imgproc.circle(temp, top_nose,3, new Scalar(0, 0, 255), 3);
+                                        //Imgproc.circle(temp, left_nose,3, new Scalar(255, 0, 0), -1);
+                                        //Imgproc.circle(temp, right_nose,3, new Scalar(255, 0, 0), -1);
+                                        //Imgproc.circle(temp, centre_nose,3, new Scalar(255, 0, 0), -1);
+
+                                        // Need to convert to integers as pixel width does not exist in float/decimal
+                                        int nose_width = (int) ((Math.hypot(left_nose.x - right_nose.x, left_nose.y - right_nose.y))*1.7);
+                                        int nose_height = (int) (nose_width * 0.7783417);
+
+                                        int moustache_height = (int) (Math.hypot(landmarkPoints[30].x - landmarkPoints[33].x, landmarkPoints[30].y - landmarkPoints[30].y));
+
+                                        // Draw rectangle around nose area (2 points are top left point and bottom right point)
+                                        //Imgproc.rectangle(temp, new Point((int)(centre_nose.x - nose_width/2), (int) (centre_nose.y + nose_height/2)), new Point((int) (centre_nose.x + nose_width/2), (int) (centre_nose.y - nose_height/2)), new Scalar(255,0,0));
+
+                                        Point top_left_moustache = new Point((int)(centre_moustache.x - nose_width/2), (int) (centre_moustache.y - nose_height/2));
+                                        Point top_left_nose = new Point((int)(centre_nose.x - nose_width/2), (int) (centre_nose.y - nose_height/2));
+                                        //Point bottom_right_nose = new Point((int) (centre_nose.x + nose_width/2), (int) (centre_nose.y + nose_height/2));
+
+                                        // Resized nose
+                                        Mat rMoustache = new Mat();
+
+                                        // Resize moustache
+                                        Imgproc.resize(moustache, rMoustache, new Size(nose_width, nose_height));
+
+                                        //final Bitmap b = Bitmap.createBitmap(nose_width, nose_height, Bitmap.Config.ARGB_8888);
+
+                                        // Works!
+                                        rMoustache.copyTo(sticker.rowRange((int)(top_left_moustache.y), (int)(top_left_moustache.y + nose_height)).colRange((int)(top_left_moustache.x), (int)(top_left_moustache.x + nose_width)));
+
+                                        // Works too!
+                                        //rNose.copyTo(temp.submat(new Rect((int) (top_left_nose.x), (int) (top_left_nose.y), nose_width, nose_height)));
+
+
+                                        //Utils.matToBitmap(temp, bitmap);
+                                        Utils.matToBitmap(sticker, view);
+                                        mainActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ivBitmap.setImageBitmap(view);
+                                            }
+                                        });
+
+                                    }
+                                }
+                                else
+                                {
+                                    System.out.println("Face not detected.");
+                                }
+
+                            }
 
 
 /*
@@ -440,6 +523,41 @@ public class FacialDetection {
                 });
 
         return imageAnalysis;
+    }
+
+    public Mat load_moustache(Mat img){
+        try {
+            InputStream is = mainActivity.getResources().openRawResource(R.raw.moustache);
+            File moustacheDir = mainActivity.getDir("toque", Context.MODE_PRIVATE);
+            File moustacheFile = new File(moustacheDir, "moustache.png");
+            FileOutputStream os = new FileOutputStream(moustacheFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+
+            img = Imgcodecs.imread(moustacheFile.getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
+            if(img.empty())
+            {
+                Log.v("MyActivity","--(!)Error loading A\n");
+                //return;
+            }
+            else
+            {
+                Log.v("MyActivity",
+                        "Loaded moustache image from " + moustacheFile.getAbsolutePath());
+                return img;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v("MyActivity", "Failed to load moustache image. Exception thrown: " + e);
+        }
+        System.out.println("weird");
+        return img;
     }
 
     public Mat load_toque(Mat img){
