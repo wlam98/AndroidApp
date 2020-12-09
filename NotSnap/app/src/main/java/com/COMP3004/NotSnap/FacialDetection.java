@@ -292,19 +292,13 @@ public class FacialDetection {
                                         // Create greyscale version of pig nose
                                         Mat nose_grey = new Mat();
                                         Imgproc.cvtColor(rNose, nose_grey, Imgproc.COLOR_BGR2GRAY);
-
                                         // Create nose mask
                                         Mat mask = new Mat();
-
                                         Imgproc.threshold(nose_grey, mask, 25, 255, Imgproc.THRESH_BINARY_INV);
-
                                         // Area around nose
                                         Mat nose_area = temp.submat(new Rect((int) (top_left_nose.x), (int) (top_left_nose.y), nose_width, nose_height));
-
                                         Mat nose_area_no_nose = new Mat();
-
                                         Core.bitwise_and(nose_area, nose_area, nose_area_no_nose, mask);
-
                                         // Print coordinates of face landmarks
                                         for(int j = 0; j < landmarkPoints.length; j++)
                                         {
