@@ -19,4 +19,9 @@
         android:id="@+id/lab"
         android:title="Rectangle Box"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/pig"
+        android:title="Pig Nose"
+        app:showAsAction="never" />
 </menu>
