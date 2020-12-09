@@ -1,0 +1,12 @@
+Week 3 (October 5, 2020) -
+	Duties:
+	2 - Learn about android development and watch tutorials. Learnt about UI components and activities.
+	1 - Think of features we would like to implement.
+
+	Achievement:
+	2 - Learned how to use Android Studio and create simple app
+	0.5 - Learned how to use phone as emulator to test app
+
+	2 hr - Meeting on October 4th.
+
+	Total: 7.5 hours

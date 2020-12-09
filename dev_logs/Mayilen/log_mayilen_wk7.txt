@@ -1,0 +1,6 @@
+week 7
+Duty:
+ran into issues implementing the function for handling the camera rotation
+where the display wouldnt rotate
+Achievement:
+found that this was caused by the textureview

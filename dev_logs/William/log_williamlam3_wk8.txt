@@ -1,0 +1,13 @@
+Week 8 (November 9, 2020) -
+	D2 Presentation
+	Duties:
+	4 - Complete face detection on setImageAnalysis() with displaying 68 face landmarks and red rectangle box around user's face.
+	2 - Complete onCreate().	
+	
+	Achievement:
+	2 - Helped with startCamera()
+	3 - Complete D2 document.
+
+	2 - Meeting
+
+	Total: 13 hours.

@@ -1,0 +1,3 @@
+WEEK 2: 
+Duty: set up necessary tools (github, android studio), lean how to create a hello world application and run the app through a virtual or physical device
+Achievement for week 2: Achieved everything except watching Github tutorial from culearn

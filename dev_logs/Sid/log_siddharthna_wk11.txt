@@ -1,0 +1,3 @@
+WEEK 11: 
+Duty: Add share button + functionality behind it 
+Achievement of week11: Added share button but failed to implement the functionality. Failed to get it to work

@@ -1,0 +1,8 @@
+Week 5 (October 19, 2020) -
+	Duties:
+	2 - Research what face detection model we can use. Cascade and yaml	
+
+	Achievement:
+	2 - Set up basic app structure and gui.
+
+	Total: 4 hours. I had a lot of assignments and midterms this. Thus, less time spent this week.

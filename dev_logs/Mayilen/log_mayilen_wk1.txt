@@ -1,0 +1,6 @@
+Week one
+Duty:
+Researched about Camera API and learned how to handle on click events
+
+Achieve:
+learned how to make a basic app with button functionality

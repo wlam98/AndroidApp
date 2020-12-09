@@ -1,0 +1,5 @@
+week8
+Duty:
+fixing the code for updatetransform()
+Achievement:
+used a matrix to get the center of the textureview and rotate it

@@ -1,0 +1,6 @@
+week 2
+Duty:
+Researched about Camera API
+Achievement:
+Learned about android studio and
+how to make a simple camera app

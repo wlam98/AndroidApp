@@ -1,0 +1,11 @@
+Week 7 (November 2, 2020) -
+	Duties:
+	3 - Research in different architecture style and design patterns.
+
+	Achievement:
+	1 - Assisted in creating component diagram.
+	2 - Worked on drop down menu functionality and choosing different camera modes.
+	1 - Looked into how to load files from res directory
+	2 - Completed load_cascade() and load_yaml()
+
+	Total: 9 hours.

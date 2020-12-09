@@ -1,0 +1,3 @@
+WEEK 9: 
+Duty: Implement the app architecture 
+Achievement of week 9: Implemented MVC architecture (created controller class and instances of Model and View to control the flow)

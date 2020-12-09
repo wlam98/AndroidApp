@@ -1,0 +1,7 @@
+Duty:
+Apply CameraX functions to existing code group mates have been working on
+
+Achieve:
+Complete sample Camera app
+
+

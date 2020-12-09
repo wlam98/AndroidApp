@@ -1,0 +1,5 @@
+week9
+Duty:
+implementing a timer for capturing a picture
+Achievement:
+found the code to be similar to the capture button with slight modifications

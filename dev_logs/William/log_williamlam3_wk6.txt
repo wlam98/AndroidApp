@@ -1,0 +1,10 @@
+Week 6 (October 26, 2020) -
+	Duties:
+	3 - Look into openCV documentation for Java and Android development. The documentation for OpenCV in java is very limited and even more limited for use in Android Development.
+	
+	Achievement:
+	4 - Help implement onCreate() and camera functionality.
+
+	2 - Meeting
+
+	Total: 9 hours.

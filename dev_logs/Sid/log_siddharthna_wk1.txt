@@ -1,0 +1,3 @@
+WEEK 1: 
+Duty: research about different app ideas, their usefulness and ease of code (discussion about APIs involved and how easy it is to implement them)
+Achievement for week 1: Documented different app ideas on a shared Google doc for later discussion. Ideas included city covid-19 tracker using maps, local room finder using Google maps etc 

@@ -1,0 +1,8 @@
+Week 4 (October 12, 2020) -
+	Duties:
+	6 - Learned how to set up Android Studio with OpenCV. I had some trouble with this.
+	
+	Achievement:
+	2 - Looked at different android camera api.
+
+	Total: 8 hours.

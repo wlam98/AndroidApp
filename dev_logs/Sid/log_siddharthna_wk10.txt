@@ -1,0 +1,3 @@
+WEEK 10: 
+Duty: Add functionality behind accept and reject button + research about share button functionality
+Achievement of week 10: Successfully implemented showAcceptedRejectedButton which deals with visibility of the two buttons. Successfully researched share functionality and put together different links for resources I found useful. 

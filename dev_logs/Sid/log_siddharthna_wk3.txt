@@ -1,0 +1,3 @@
+WEEK 3: 
+Duty: Decide app idea + functional non functional properties of the app (D1 proposal) 
+Achievement for week 3: Talked in depts about trade offs of different app ideas and contributed towards D1 documentation.
