@@ -24,4 +24,9 @@
         android:id="@+id/pig"
         android:title="Pig Nose"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/toque"
+        android:title="Toque"
+        app:showAsAction="never" />
 </menu>

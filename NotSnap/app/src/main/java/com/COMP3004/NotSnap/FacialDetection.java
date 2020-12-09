@@ -52,6 +52,9 @@ public class FacialDetection {
     Facemark facemark;
     Context c;
 
+    Mat nose = new Mat();
+    Mat toque = new Mat();
+
     // Constructor
     public FacialDetection(Activity a, TextureView t, ImageView i, Context contxt)
     {
@@ -69,6 +72,9 @@ public class FacialDetection {
         facemark = Face.createFacemarkLBF();
         // Call yaml file loader function
         load_yaml(facemark);
+
+        nose = load_nose(nose);
+        toque = load_toque(toque);
     }
 
     public ImageAnalysis setImageAnalysis(final int cameraModeSelection)
@@ -121,8 +127,8 @@ public class FacialDetection {
                             Mat sticker = new Mat();
                             Utils.bitmapToMat(view, sticker);
 
-                            Mat nose = new Mat();
-                            nose = load_nose(nose);
+                            //Mat nose = new Mat();
+                            //nose = load_nose(nose);
 
                             // Convert to grayscale (Was making the frame rate really low so seemed laggy.)
                             //Imgproc.cvtColor(src, grey, Imgproc.COLOR_BGR2GRAY);
@@ -192,6 +198,7 @@ public class FacialDetection {
                                     }
                                 });
                             }
+                            // Pig Nose face filter
                             else if(cameraModeSelection == 3)
                             {
                                 List<MatOfPoint2f> landmarks = new LinkedList<MatOfPoint2f>();
@@ -292,13 +299,19 @@ public class FacialDetection {
                                         // Create greyscale version of pig nose
                                         Mat nose_grey = new Mat();
                                         Imgproc.cvtColor(rNose, nose_grey, Imgproc.COLOR_BGR2GRAY);
+
                                         // Create nose mask
                                         Mat mask = new Mat();
+
                                         Imgproc.threshold(nose_grey, mask, 25, 255, Imgproc.THRESH_BINARY_INV);
+
                                         // Area around nose
                                         Mat nose_area = temp.submat(new Rect((int) (top_left_nose.x), (int) (top_left_nose.y), nose_width, nose_height));
+
                                         Mat nose_area_no_nose = new Mat();
+
                                         Core.bitwise_and(nose_area, nose_area, nose_area_no_nose, mask);
+
                                         // Print coordinates of face landmarks
                                         for(int j = 0; j < landmarkPoints.length; j++)
                                         {
@@ -312,6 +325,104 @@ public class FacialDetection {
                                 }
 
                             }
+                            // Toque filter
+                            else if(cameraModeSelection == 4)
+                            {
+                                List<MatOfPoint2f> landmarks = new LinkedList<MatOfPoint2f>();
+
+                                // Face landmark detection
+                                boolean success = facemark.fit(temp, faceDetections, landmarks);
+                                if (success)
+                                {
+                                    System.out.println("Face detected. Landmark size is " + landmarks.size());
+
+                                    // If successful, draw key points on the video frame
+                                    // Landmarks size is # of face is detected
+                                    for (int i = 0; i < landmarks.size(); i++)
+                                    {
+                                        // Customize the function of drawing facial feature points, which can draw the shape/contour of facial feature points. JAVA version does not do it temporarily
+                                        // Face.drawFacemarks(temp, landmarks.get(i));
+
+                                        // OpenCV comes with a function for drawing key points of the face: drawFacemarks
+                                        //Face.drawFacemarks(temp, landmarks.get(i), new Scalar(255, 0, 0));
+
+                                        Point[] landmarkPoints = landmarks.get(0).toArray();
+
+                                        // Finding landmarks on face
+                                        Point left_head = new Point(landmarkPoints[18].x, landmarkPoints[18].y);
+                                        Point right_head = new Point(landmarkPoints[25].x, landmarkPoints[25].y);
+                                        Point middle_head = new Point((landmarkPoints[18].x + (((Math.hypot(left_head.x - right_head.x, left_head.y - right_head.y)))/2)), landmarkPoints[18].y);
+                                        Point centre_head = new Point((landmarkPoints[18].x + (((Math.hypot(left_head.x - right_head.x, left_head.y - right_head.y)))/2)), (landmarkPoints[18].y - 1.5*(((Math.hypot(left_head.x - right_head.x, left_head.y - right_head.y)))/2)));
+
+                                        //Imgproc.circle(temp, top_nose,3, new Scalar(0, 0, 255), 3);
+                                        //Imgproc.circle(temp, left_nose,3, new Scalar(255, 0, 0), -1);
+                                        //Imgproc.circle(temp, right_nose,3, new Scalar(255, 0, 0), -1);
+                                        //Imgproc.circle(temp, centre_nose,3, new Scalar(255, 0, 0), -1);
+
+                                        // Need to convert to integers as pixel width does not exist in float/decimal
+                                        int head_width = (int) ((Math.hypot(left_head.x - right_head.x, left_head.y - right_head.y))*1.7);
+                                        int head_height = (int) (head_width * 0.932);
+
+                                        // Draw rectangle around nose area (2 points are top left point and bottom right point)
+                                        //Imgproc.rectangle(temp, new Point((int)(centre_nose.x - nose_width/2), (int) (centre_nose.y + nose_height/2)), new Point((int) (centre_nose.x + nose_width/2), (int) (centre_nose.y - nose_height/2)), new Scalar(255,0,0));
+
+                                        Point top_left_head = new Point((int)(centre_head.x - head_width/2), (int) (centre_head.y - head_height/2));
+                                        Point bottom_right_head = new Point((int) (centre_head.x + head_height/2), (int) (centre_head.y + head_height/2));
+
+                                        // Resized toque
+                                        Mat rToque = new Mat();
+
+                                        System.out.println("Temp Channel = " + temp.channels());
+                                        System.out.println("Nose image columns = " + toque.cols());
+                                        System.out.println("Nose image rows = " + toque.rows());
+                                        System.out.println("Nose size = " + toque.size().toString());
+
+                                        // Resize pig nose
+                                        Imgproc.resize(toque, rToque, new Size(head_width, head_height));
+
+                                        //final Bitmap b = Bitmap.createBitmap(nose_width, nose_height, Bitmap.Config.ARGB_8888);
+
+                                        int tempRow = temp.rows();
+                                        int tempColumn = temp.cols();
+
+                                        System.out.println("Temp Row = " + tempRow);
+                                        System.out.println("Temp Column = " + tempColumn);
+
+                                        System.out.println("Sticker Row = " + sticker.rows());
+                                        System.out.println("Sticker Column = " + sticker.cols());
+
+
+                                        System.out.println("Sticker Channel = " + sticker.channels());
+                                        System.out.println("Sticker Type = " + sticker.type());
+                                        System.out.println("rToque Channel = " + rToque.channels());
+                                        System.out.println("rToque Type = " + rToque.type());
+
+                                        // Works!
+                                        rToque.copyTo(sticker.rowRange((int)(top_left_head.y), (int)(top_left_head.y + head_height)).colRange((int)(top_left_head.x), (int)(top_left_head.x + head_width)));
+
+                                        // Works too!
+                                        //rNose.copyTo(temp.submat(new Rect((int) (top_left_nose.x), (int) (top_left_nose.y), nose_width, nose_height)));
+
+
+                                        //Utils.matToBitmap(temp, bitmap);
+                                        Utils.matToBitmap(sticker, view);
+                                        mainActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ivBitmap.setImageBitmap(view);
+                                            }
+                                        });
+
+
+                                    }
+                                }
+                                else
+                                {
+                                    System.out.println("Face not detected.");
+                                }
+
+                            }
+
 
 /*
                             //Utils.matToBitmap(temp, bitmap);
@@ -323,11 +434,47 @@ public class FacialDetection {
                                 }
                             });
                             */
+
                         }
                     }
                 });
 
         return imageAnalysis;
+    }
+
+    public Mat load_toque(Mat img){
+        try {
+            InputStream is = mainActivity.getResources().openRawResource(R.raw.beanie);
+            File toqueDir = mainActivity.getDir("toque", Context.MODE_PRIVATE);
+            File toqueFile = new File(toqueDir, "beanie.png");
+            FileOutputStream os = new FileOutputStream(toqueFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+
+            img = Imgcodecs.imread(toqueFile.getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
+            if(img.empty())
+            {
+                Log.v("MyActivity","--(!)Error loading A\n");
+                //return;
+            }
+            else
+            {
+                Log.v("MyActivity",
+                        "Loaded toque image from " + toqueFile.getAbsolutePath());
+                return img;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v("MyActivity", "Failed to load toque image. Exception thrown: " + e);
+        }
+        System.out.println("weird");
+        return img;
     }
 
     public Mat load_nose(Mat img){

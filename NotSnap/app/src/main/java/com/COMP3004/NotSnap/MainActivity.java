@@ -14,9 +14,8 @@ import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.content.Context;
+
 import android.app.Activity;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -57,19 +56,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     int cameraModeSelection = 0;
 
-
-        Handler handler;
     ImageCapture imageCapture;
     ImageAnalysis imageAnalysis;
     Preview preview;
     Context ctx;
 
-    FloatingActionButton btnCapture, btnOk, btnCancel, btnTimer, btnHint;;
+    FloatingActionButton btnCapture, btnOk, btnCancel;
 
     // Model and View
     FacialDetection facialDetection;
     Camera camera;
-
 
     static {
         if (!OpenCVLoader.initDebug())
@@ -83,32 +79,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
         final ImageCapture imgCapture = new ImageCapture(imageCaptureConfig);
 
-
-        btnTimer.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                handler=new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        imgCapture.takePicture(new ImageCapture.OnImageCapturedListener() {
-                            @Override
-                            public void onCaptureSuccess(ImageProxy image, int rotationDegrees) {
-                                Bitmap bitmap = textureView.getBitmap();
-                                showAcceptedRejectedButton(true);
-                                ivBitmap.setImageBitmap(bitmap);
-                            }
-
-                            @Override
-                            public void onError(ImageCapture.UseCaseError useCaseError, String message, @Nullable Throwable cause) {
-                                super.onError(useCaseError, message, cause);
-                            }
-                        });
-                    }
-                },5000);
-            }
-        });
 
         btnCapture.setOnClickListener(new View.OnClickListener() {
 
@@ -140,21 +110,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnTimer=findViewById(R.id.btnTimer);
         btnCapture = findViewById(R.id.btnCapture);
         btnOk = findViewById(R.id.btnAccept);
         btnCancel = findViewById(R.id.btnReject);
-        btnHint = findViewById(R.id.btnhint);
-
 
         btnOk.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
-        btnHint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Instruction.class));
-            }
-        });
 
         llBottom = findViewById(R.id.llBottom);
         textureView = findViewById(R.id.textureView);
@@ -162,12 +123,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         imageCapture = setImageCapture();
 
-
         facialDetection = new FacialDetection((Activity)this, textureView, ivBitmap, this);
         imageAnalysis = facialDetection.setImageAnalysis(cameraModeSelection);
 
         System.out.println("Created face");
-
 
         camera = new Camera(this, textureView);
 
@@ -183,23 +142,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             CameraX.unbind(camera.preview, camera.imageAnalysis);
             llBottom.setVisibility(View.VISIBLE);
             btnCapture.hide();
-            btnTimer.hide();
             textureView.setVisibility(View.GONE);
         } else {
             btnCapture.show();
-            btnTimer.show();
             llBottom.setVisibility(View.GONE);
             textureView.setVisibility(View.VISIBLE);
             textureView.post(new Runnable() {
                 @Override
                 public void run() {
                     camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
-
                 }
             });
         }
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -254,6 +209,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 cameraModeSelection = 3;
                 camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
                 return true;
+
+            case R.id.toque:
+                cameraModeSelection = 4;
+                camera.startCamera(setImageCapture(), facialDetection.setImageAnalysis(cameraModeSelection));
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -268,11 +228,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btnAccept:
                 File file = new File(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "" + System.currentTimeMillis() + "_CameraX.jpg");
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "" + System.currentTimeMillis() + "_JDCameraX.jpg");
                 imageCapture.takePicture(file, new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
-                        System.out.println(file.toString());
                         showAcceptedRejectedButton(false);
 
                         Toast.makeText(getApplicationContext(), "Image saved successfully in Pictures Folder", Toast.LENGTH_LONG).show();
@@ -280,8 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     @Override
                     public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                        String msg = "Picture capture failed: " + message;
-                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+
                     }
                 });
                 break;
