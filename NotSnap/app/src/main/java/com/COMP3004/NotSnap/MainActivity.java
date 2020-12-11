@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -290,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         System.out.println(file.toString());
                         showAcceptedRejectedButton(false);
 
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
                         Toast.makeText(getApplicationContext(), "Image saved successfully in Pictures Folder", Toast.LENGTH_LONG).show();
                     }
 

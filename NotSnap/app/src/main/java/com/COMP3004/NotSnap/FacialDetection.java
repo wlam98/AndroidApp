@@ -261,7 +261,7 @@ public class FacialDetection {
 
                                         int tempRow = temp.rows();
                                         int tempColumn = temp.cols();
-
+/*
                                         System.out.println("Temp Row = " + tempRow);
                                         System.out.println("Temp Column = " + tempColumn);
 
@@ -280,7 +280,7 @@ public class FacialDetection {
                                         System.out.println("Sticker Type = " + sticker.type());
                                         System.out.println("rNose Channel = " + rNose.channels());
                                         System.out.println("rNose Type = " + rNose.type());
-
+*/
                                         // Works!
                                         rNose.copyTo(sticker.rowRange((int)(top_left_nose.y), (int)(top_left_nose.y + nose_height)).colRange((int)(top_left_nose.x), (int)(top_left_nose.x + nose_width)));
 
@@ -323,6 +323,16 @@ public class FacialDetection {
                                 }
                                 else
                                 {
+                                    final Bitmap a = Bitmap.createBitmap(temp.cols(), temp.rows(), Bitmap.Config.ARGB_8888);
+                                    //Utils.matToBitmap(temp, bitmap);
+                                    //Utils.matToBitmap(temp, bitmap);
+                                    mainActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ivBitmap.setImageBitmap(a);
+                                        }
+                                    });
+
                                     System.out.println("Face not detected.");
                                 }
 
@@ -420,6 +430,16 @@ public class FacialDetection {
                                 }
                                 else
                                 {
+                                    final Bitmap a = Bitmap.createBitmap(temp.cols(), temp.rows(), Bitmap.Config.ARGB_8888);
+                                    //Utils.matToBitmap(temp, bitmap);
+                                    //Utils.matToBitmap(temp, bitmap);
+                                    mainActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ivBitmap.setImageBitmap(a);
+                                        }
+                                    });
+
                                     System.out.println("Face not detected.");
                                 }
 
@@ -501,6 +521,16 @@ public class FacialDetection {
                                 }
                                 else
                                 {
+                                    final Bitmap a = Bitmap.createBitmap(temp.cols(), temp.rows(), Bitmap.Config.ARGB_8888);
+                                    //Utils.matToBitmap(temp, bitmap);
+                                    //Utils.matToBitmap(temp, bitmap);
+                                    mainActivity.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ivBitmap.setImageBitmap(a);
+                                        }
+                                    });
+
                                     System.out.println("Face not detected.");
                                 }
 
